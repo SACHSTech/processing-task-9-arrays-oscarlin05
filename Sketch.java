@@ -2,20 +2,21 @@ import processing.core.PApplet;
 
 public class Sketch extends PApplet {
 	
-  boolean upPressed = false;
-  boolean downPressed = false;
-  boolean upPressedBlue = false;
-  boolean downPressedBlue = false;
-  boolean leftPressedBlue = false;
-  boolean rightPressedBlue = false;
+  // create variables 
+  boolean blnUpPressed = false;
+  boolean blnDownPressed = false;
+  boolean blnUpPressedBlue = false;
+  boolean blnDownPressedBlue = false;
+  boolean blnLeftPressedBlue = false;
+  boolean blnRightPressedBlue = false;
 
-  float blueCircleY = 400;
-  float blueCircleX = 200;
+  float fltBlueCircleY = 600;
+  float fltBlueCircleX = 300;
 
-  float snowballSizeX = 25;
-  float snowballSizeY = 25;
-  float bbSizeX = 35;
-  float bbSizeY = 35;
+  float fltSnowballSizeX = 30;
+  float fltSnowballSizeY = 30;
+  float fltBBSizeX = 35;
+  float fltBbSizeY = 35;
   float[] circleX = new float[25];
   float[] circleY = new float[25];
 
@@ -23,10 +24,16 @@ public class Sketch extends PApplet {
    
   int intPlayerLives = 3;
   boolean blnPlayerAlive = true;
+  boolean blnMouseClick = false;
 
   public void settings() {
-	// put your size call here
-    size(400, 400);
+	// create size 
+    size(600, 600);
+  }
+
+  /** generate random snowball location 
+  *  loop it  */
+  public void setup() {
     for (int i = 0; i < circleY.length; i++) {
       circleY[i] = random(height);
       circleX[i] = random(width);
@@ -34,117 +41,130 @@ public class Sketch extends PApplet {
     }
   }
 
-  public void setup() {
-  }
-
   public void draw() {
-    if (blnPlayerAlive = true){
+    // set player life to true, set background color 
+    if (blnPlayerAlive == true) {
 	    background(125, 255, 255);
       for (int i = 0; i < circleY.length; i++) {
         if (ballHideStatus[i] == false){
         fill(255);
-        ellipse(circleX[i], circleY[i], snowballSizeX, snowballSizeY);
+        ellipse(circleX[i], circleY[i], fltSnowballSizeX, fltSnowballSizeY);
         circleY[i]++;
         }
-        if (dist(blueCircleX, blueCircleY, circleX[i], circleY[i]) <= 35 && ballHideStatus[i] == false) {
+        // create boundries and hide ball when player ball hits the snowball/click on it with mouse
+        if (dist(fltBlueCircleX, fltBlueCircleY, circleX[i], circleY[i]) <= 35 && ballHideStatus[i] == false) {
           ballHideStatus[i] = true;
           intPlayerLives--;
+        }
+        if (dist(mouseX, mouseY, circleX[i], circleY[i]) <= 20 && blnMouseClick) {
+          ballHideStatus[i] = true;
         }
   
         if (circleY[i] > height) {
           circleY[i] = 0;
-      }
+        }
+        // keyboard input to increase or decrease speed of snowball
         if (keyPressed) {
           if (keyCode == DOWN) {
-            downPressed = true;
+            blnDownPressed = true;
             circleY[i] += 5;
-        }
+          }
           if (keyCode == UP) {
-            upPressed = true;
+            blnUpPressed = true;
             circleY[i] -= 0.5;
+          }
         }
-      }
-
-        if (upPressedBlue) {
-          blueCircleY-= 0.20;
+        // set player ball speed
+        if (blnUpPressedBlue) {
+          fltBlueCircleY-= 0.20;
         }
-        if (downPressedBlue) {
-          blueCircleY+= 0.20;
+        if (blnDownPressedBlue) {
+          fltBlueCircleY+= 0.20;
         }
-        if (leftPressedBlue) {
-          blueCircleX-= 0.20;
+        if (blnLeftPressedBlue) {
+          fltBlueCircleX-= 0.20;
         }
-        if (rightPressedBlue) {
-          blueCircleX+= 0.20;
+        if (blnRightPressedBlue) {
+          fltBlueCircleX+= 0.20;
         }
+        // create blueball (player ball)
         fill(0, 25, 250);
-        ellipse(blueCircleX, blueCircleY, bbSizeX, bbSizeY);   
+        ellipse(fltBlueCircleX, fltBlueCircleY, fltBBSizeX, fltBbSizeY);   
+        }
+
+      // setting boundries so that player ball will not go out of frame
+      if (fltBlueCircleX < 20) {
+        fltBlueCircleX -= -7.5;
+      }
+      else if (fltBlueCircleX > 580) {
+        fltBlueCircleX -= 7.5;
+      }
+      if (fltBlueCircleY < 20) {
+        fltBlueCircleY -= -7.5;
+      }
+      else if (fltBlueCircleY > 580) {
+        fltBlueCircleY -= 7.5;
       }
 
+      // create lives for player 
+      for (int i = 1; i <= intPlayerLives; i++) {
+        fill(255, 0 ,0);
+        rect(500 + i * 24, 15, 20, 20);      
+      }
 
-    if (blueCircleX < 25) {
-      blueCircleX -= -7.5;
+      if (intPlayerLives <= 0) {
+        blnPlayerAlive = false;     
+      }
     }
-    else if (blueCircleX > 375) {
-      blueCircleX -= 7.5;
-    }
-    if (blueCircleY < 25) {
-      blueCircleY -= -7.5;
-    }
-    else if (blueCircleY > 375) {
-      blueCircleY -= 7.5;
-    }
-
-    // create lives
-    for (int i = 1; i <= intPlayerLives; i++) {
-      fill(255, 0 ,0);
-      rect(350 + i * 12, 15, 10, 10);
-      //rect(365, 15, 10, 10);
-      //rect(380, 15, 10, 10);      
-    }
-
-    if (intPlayerLives == 0) {
-      blnPlayerAlive = false;
-    }
-    }
-  else {
+    // make background white when player run out of lives and display game over
+    else {
       background(255);
+      textSize(50);
+      text("GAME OVER", 150, 300);
     }  
   }
-  
-    // create blue ball 
-  public void keyPressed() {
 
+  public void keyPressed() {
+    // allow handling multiple keys when moving the player ball
     if (keyPressed) {
       if (key == 'w'){
-        upPressedBlue = true;
+        blnUpPressedBlue = true;
       }
       else if (key == 'a'){
-        leftPressedBlue = true;
+        blnLeftPressedBlue = true;
       }
       else if (key == 's') {
-        downPressedBlue = true;
+        blnDownPressedBlue = true;
       }
       else if  (key == 'd'){
-        rightPressedBlue = true;
+        blnRightPressedBlue = true;
       }
     }
   }
 
   public void keyReleased() {
-
+    // allow handling multiple keys when moving the player ball
     if (key == 'w') {
-      upPressedBlue = false;
+      blnUpPressedBlue = false;
     }
     else if (key == 's') {
-      downPressedBlue = false;
+      blnDownPressedBlue = false;
     }
     else if (key == 'a') {
-      leftPressedBlue = false;
+      blnLeftPressedBlue = false;
     }
     else if (key == 'd') {
-      rightPressedBlue = false;
+      blnRightPressedBlue = false;
     }
-}
+  }
 
+  public void mousePressed() {
+    // allow mouse input to destroy snowball when clicked
+    ellipse(mouseX, mouseY, 20, 20);
+    blnMouseClick = true;
+  }
+  
+  public void mouseReleased() {
+    blnMouseClick = false;
+  }
 }
